@@ -9,6 +9,8 @@
 Execute these commands:
 
 ```bash
+mkdir -p .cascade/rules
+mkdir -p .cascade/workflows
 mkdir -p .project_dev
 mkdir -p config
 mkdir -p logs
@@ -70,31 +72,22 @@ Read `CASCADE_CONFIGURATION.md` and configure:
 3. **Dynamic Status Memory** → `.project_dev/PROJECT_LOG.md`
 4. **Hypothesis Memory** → `HYPOTHESES.md`
 
-### 4.2 Create 5 Rules:
-1. **Read Before Writing**
-2. **Context-First**
-3. **Adhere to Norms**
-4. **Traceability**
-5. **Status Aware**
-
-### 4.3 Create 5 Workflows:
-1. **Start_Day_Session**
-2. **Start_New_Feature**
-3. **Run_Full_Experiment**
-4. **Update_Code_Context**
-5. **End_Day_Session**
+### 4.2 Rules & Workflows:
+**Automatically loaded from `.cascade/` directory** - No manual configuration needed!
+- Rules are in `.cascade/rules/`
+- Workflows are in `.cascade/workflows/`
+- See `.cascade/README.md` for details
 
 ---
 
 ## Step 5: Verify Setup
 
 Check that:
-- [ ] All folders exist
+- [ ] All folders exist (including `.cascade/`)
 - [ ] All files exist and have content (not empty)
 - [ ] Scripts are executable
 - [ ] Cascade memories are configured
-- [ ] Cascade rules are configured
-- [ ] Cascade workflows are configured
+- [ ] `.cascade/` directory contains rules and workflows
 
 ---
 
@@ -176,10 +169,9 @@ A complete DSPy development workspace with:
 ### Placeholders (1):
 - `results/.gitkeep`
 
-### Cascade Config (3):
-- 4 Memories
-- 5 Rules
-- 5 Workflows
+### Cascade Config:
+- 4 Memories (manual configuration)
+- `.cascade/` directory with rules and workflows (automatic)
 
 ---
 

@@ -31,8 +31,7 @@ This directory contains everything needed to set up a complete DSPy development 
 5. **`CASCADE_CONFIGURATION.md`** 🎯
    - Cascade/Windsurf setup
    - 4 Memories configuration
-   - 5 Rules configuration
-   - 5 Workflows configuration
+   - Reference to `.cascade/` directory for rules and workflows
 
 6. **`setup_workspace.py`** 🤖
    - Automated setup script
@@ -89,6 +88,9 @@ After setup, your workspace will have:
 
 ```
 your_project/
+├── .cascade/              # Cascade AI configuration
+│   ├── rules/             # Enforced constraints
+│   └── workflows/         # Procedural guides
 ├── .project_dev/          # AI context files (5 files)
 ├── config/                # Configuration (2 files)
 ├── logs/                  # Local logs (gitignored)
@@ -104,7 +106,7 @@ your_project/
 └── README.md
 ```
 
-**Total:** 8 folders, 23 files
+**Total:** 10 folders, 23+ files (plus rules and workflows in `.cascade/`)
 
 ## 🎯 The 3-Pillar Framework
 
@@ -128,9 +130,10 @@ your_project/
 ## 🔧 Cascade Integration
 
 The setup includes configuration for:
-- **4 Memories:** Static Norms, Code Context, Dynamic Status, Hypothesis
-- **5 Rules:** Read Before Writing, Context-First, Adhere to Norms, Traceability, Status Aware
-- **5 Workflows:** Start Day, New Feature, Run Experiment, Update Context, End Day
+- **4 Memories:** Static Norms, Code Context, Dynamic Status, Hypothesis (manual configuration)
+- **Rules & Workflows:** Automatically loaded from `.cascade/` directory
+  - Rules in `.cascade/rules/` (DSPy docs, hypothesis traceability, code context)
+  - Workflows in `.cascade/workflows/` (session start, pre-implementation checklist)
 
 ## 📚 File Descriptions
 
@@ -175,8 +178,8 @@ After setup, verify:
 
 4. **Cascade is configured:**
    - Check memories in Cascade settings
-   - Verify rules are active
-   - Test workflows
+   - Verify `.cascade/` directory exists with rules and workflows
+   - Cascade automatically loads rules and workflows from `.cascade/`
 
 ## 🎓 Usage After Setup
 

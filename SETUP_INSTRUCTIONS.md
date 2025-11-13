@@ -12,6 +12,8 @@
 
 2. **Create folder structure:**
    ```
+   .cascade/rules/
+   .cascade/workflows/
    .project_dev/
    config/
    logs/
@@ -30,6 +32,15 @@
 
 ```
 project_root/
+├── .cascade/
+│   ├── README.md
+│   ├── rules/
+│   │   ├── dspy_documentation.md
+│   │   ├── hypothesis_traceability.md
+│   │   └── check_existing_code.md
+│   └── workflows/
+│       ├── session_start.md
+│       └── pre_implementation_checklist.md
 ├── .project_dev/
 │   ├── DEV_NORMS.md
 │   ├── TDD_PROCESS.md
@@ -63,24 +74,25 @@ project_root/
 
 ## Setup Order
 
-1. Create all folders
-2. Create all files in `.project_dev/`
-3. Create config files
-4. Create source code structure
-5. Create test data
-6. Create scripts
-7. Create root files (.gitignore, README.md, etc.)
-8. Configure Cascade memories, rules, and workflows
+1. Create all folders (including `.cascade/`)
+2. Create all files in `.cascade/` (rules and workflows)
+3. Create all files in `.project_dev/`
+4. Create config files
+5. Create source code structure
+6. Create test data
+7. Create scripts
+8. Create root files (.gitignore, README.md, etc.)
+9. Configure Cascade memories (rules and workflows auto-load from `.cascade/`)
 
 ## Verification
 
 After setup, verify:
-- [ ] All folders exist
+- [ ] All folders exist (including `.cascade/`)
 - [ ] All files have content (not empty)
+- [ ] `.cascade/` directory contains rules and workflows
 - [ ] `scripts/generate_context_map.py` is executable
 - [ ] Cascade memories are configured
-- [ ] Cascade rules are configured
-- [ ] Cascade workflows are configured
+- [ ] Cascade automatically loads rules and workflows from `.cascade/`
 
 ## Next Steps
 

@@ -1,6 +1,6 @@
 # Cascade/Windsurf Configuration Guide
 
-**IMPORTANT:** After creating all files from SETUP_CONTENT_PART1.md and SETUP_CONTENT_PART2.md, configure Cascade with the following memories, rules, and workflows.
+**IMPORTANT:** After creating all files from SETUP_CONTENT_PART1.md and SETUP_CONTENT_PART2.md, configure Cascade with the following memories. Rules and workflows are now automatically loaded from the `.cascade/` directory.
 
 ---
 
@@ -64,209 +64,29 @@ Memories provide the AI with persistent access to project context files.
 
 ---
 
-## Part 2: Cascade Rules
+## Part 2: Cascade Rules & Workflows
 
-Rules are high-level instructions that govern AI behavior at all times.
+**Rules and workflows are now automatically loaded from the `.cascade/` directory.**
 
-### Rule 1: Read Before Writing
+The `.cascade/` directory contains:
+- **`.cascade/rules/`** - Enforced constraints that Cascade must follow
+- **`.cascade/workflows/`** - Step-by-step procedural guides for common tasks
 
-**Name:** `Read Before Writing`
+For details on what rules and workflows are configured, see:
+- [`.cascade/README.md`](.cascade/README.md) - Overview of the Cascade configuration
+- Individual rule files in `.cascade/rules/`
+- Individual workflow files in `.cascade/workflows/`
 
-**Content:**
-```
-Before generating any code or plan, you MUST read the contents of the Static Norms Memory and the Code Context Memory. This ensures you understand the project standards and existing code before making changes.
-```
+### Current Rules (in `.cascade/rules/`)
 
----
+1. **DSPy Documentation Standards** - Enforces structured docstrings for Signatures and Modules
+2. **Hypothesis Traceability** - Requires H-XXX format in commits, branches, and results
+3. **Code Context Consultation** - Requires checking CODE_CONTEXT.md before implementing new code
 
-### Rule 2: Context-First
+### Current Workflows (in `.cascade/workflows/`)
 
-**Name:** `Context-First`
-
-**Content:**
-```
-Before implementing any new function, class, or dspy.Signature, you MUST consult the Code Context Memory. If similar functionality exists, propose its reuse. Do not re-implement existing logic. Always check CODE_CONTEXT.md first.
-```
-
----
-
-### Rule 3: DSPy Documentation Standard
-
-**Name:** `DSPy Documentation Standard`
-
-**Content:**
-```
-CRITICAL: Adhere strictly to DOC_STANDARDS.md for DSPy-idiomatic documentation:
-
-- dspy.Signature docstrings MUST be purely functional (concise task instructions for the LLM)
-- dspy.Signature docstrings are NOT for human/AI context - they are optimized by Teleprompters
-- dspy.Module docstrings MUST include: Purpose, Role in execution, and Assumptions
-- dspy.Module docstrings are the designated place for human/AI context
-- Utility functions use standard Python docstrings (Purpose, Role, Assumptions)
-- Commit message format: [H-XXX] Type: Description
-- Branch naming: feature/H-XXX-description
-- Follow test-driven development process from TDD_PROCESS.md
-```
-
----
-
-### Rule 4: Traceability
-
-**Name:** `Traceability`
-
-**Content:**
-```
-Every new feature or experiment MUST be associated with an ID from the Hypothesis Memory (HYPOTHESES.md). Use the format H-XXX in all commits, branches, and results directories. This ensures all work is traceable to a specific hypothesis.
-```
-
----
-
-### Rule 5: Status Aware
-
-**Name:** `Status Aware`
-
-**Content:**
-```
-At the beginning of any new session, you MUST read the Dynamic Status Memory (PROJECT_LOG.md) to understand the last-known state. Summarize what was done previously and what the next steps are before proceeding with new work.
-```
-
----
-
-## Part 3: Cascade Workflows
-
-Workflows are automated multi-step processes for common tasks.
-
-### Workflow 1: Start_Day_Session
-
-**Name:** `Start Day Session`
-
-**Trigger:** User starts a new session or says "Let's start" / "Good morning"
-
-**Steps:**
-
-1. Read `Dynamic Status Memory` (`.project_dev/PROJECT_LOG.md`)
-2. Read `Hypothesis Memory` (`HYPOTHESES.md`)
-3. Summarize for the user:
-   - "Welcome back. Here is the last-known status: [Summary of last entry in PROJECT_LOG.md]"
-   - "The current open hypotheses are: [List hypotheses with 'Pending' or 'In Progress' status]"
-   - "What is our objective today?"
-
-**Implementation:**
-```
-STEP 1: Read file .project_dev/PROJECT_LOG.md
-STEP 2: Read file HYPOTHESES.md
-STEP 3: Provide summary to user with:
-  - Last session summary
-  - Open hypotheses
-  - Ask for today's objective
-```
-
----
-
-### Workflow 2: Start_New_Feature
-
-**Name:** `Start New Feature`
-
-**Trigger:** User asks to build a new feature (e.g., "Let's add a summarization module")
-
-**Steps:**
-
-1. Ask: "Which Hypothesis ID from HYPOTHESES.md does this feature test?" (User provides ID, e.g., H-002)
-2. Read `Static Norms Memory` (specifically `TDD_PROCESS.md` and `DOC_STANDARDS.md`)
-3. Read `Code Context Memory` (`.project_dev/CODE_CONTEXT.md`)
-4. Confirm: "Understood. Per TDD_PROCESS.md, I will first create a new test file in test_data/ and add a failing test to evaluate.py for Hypothesis H-XXX. Please confirm."
-5. Proceed with TDD loop
-
-**Implementation:**
-```
-STEP 1: Ask user for Hypothesis ID
-STEP 2: Read .project_dev/TDD_PROCESS.md
-STEP 3: Read .project_dev/DOC_STANDARDS.md
-STEP 4: Read .project_dev/CODE_CONTEXT.md
-STEP 5: Propose test-first approach
-STEP 6: Wait for confirmation
-STEP 7: Implement TDD loop
-```
-
----
-
-### Workflow 3: Run_Full_Experiment
-
-**Name:** `Run Full Experiment`
-
-**Trigger:** User wants to validate a completed POC (e.g., "Let's run the full evaluation")
-
-**Steps:**
-
-1. Ask: "Which Hypothesis ID are we evaluating?" (User provides H-XXX)
-2. Confirm: "I will now run the full test harness against the gold set and save the results to a new, version-controlled directory."
-3. Execute command:
-   ```bash
-   python evaluate.py --config config/dev_config.json \
-     --test_set test_data/gold_set.jsonl \
-     --output_dir results/H-XXX_eval_$(date +%Y-%m-%d)
-   ```
-4. Wait for completion
-5. Summarize: "Evaluation complete. The outputs are in results/H-XXX_eval_YYYY-MM-DD/. The metrics.json file shows: [Key metrics]. How should we update HYPOTHESES.md?"
-
-**Implementation:**
-```
-STEP 1: Ask user for Hypothesis ID
-STEP 2: Confirm action
-STEP 3: Run command: python evaluate.py --config config/dev_config.json --test_set test_data/gold_set.jsonl --output_dir results/H-XXX_eval_$(date +%Y-%m-%d)
-STEP 4: Read results/H-XXX_eval_*/metrics.json
-STEP 5: Summarize results and ask how to update HYPOTHESES.md
-```
-
----
-
-### Workflow 4: Update_Code_Context
-
-**Name:** `Update Code Context`
-
-**Trigger:** User asks "Update the code context" or after a new module is merged
-
-**Steps:**
-
-1. Confirm: "Updating the code context map..."
-2. Execute command: `python scripts/generate_context_map.py`
-3. Verify: "The script has successfully scanned all src/modules/ for dspy.Module classes and extracted their docstrings (Purpose, Role, Assumptions). Per DOC_STANDARDS.md, dspy.Signature docstrings were NOT included as they are functional LLM instructions."
-4. Confirm: "The CODE_CONTEXT.md file in the Code Context Memory is now up-to-date with the latest src/ directory."
-
-**Implementation:**
-```
-STEP 1: Announce action
-STEP 2: Run command: python scripts/generate_context_map.py
-STEP 3: Verify script extracted Module docstrings and ignored Signature docstrings
-STEP 4: Confirm completion
-```
-
----
-
-### Workflow 5: End_Day_Session
-
-**Name:** `End Day Session`
-
-**Trigger:** User says "Let's wrap up" / "End session" / "That's all for today"
-
-**Steps:**
-
-1. Prompt user: "Okay. To update the PROJECT_LOG.md, please summarize:
-   - What did we try today?
-   - What were the key decisions or results?
-   - What is the next step for tomorrow?"
-2. Wait for user's answers
-3. Format the answers with a timestamp
-4. Append to `.project_dev/PROJECT_LOG.md`
-5. Confirm: "The project log is updated. Session concluded."
-
-**Implementation:**
-```
-STEP 1: Ask user for session summary (what tried, decisions, next steps)
-STEP 2: Format response with timestamp
-STEP 3: Append to .project_dev/PROJECT_LOG.md
-STEP 4: Confirm completion
-```
+1. **Session Start Protocol** - Reads PROJECT_LOG.md and HYPOTHESES.md to establish context
+2. **Pre-Implementation Checklist** - Ensures standards are consulted before writing code
 
 ---
 
@@ -280,26 +100,14 @@ STEP 4: Confirm completion
 4. For each memory, add the file paths listed
 5. Save and verify the memories are active
 
-### How to Set Up Rules:
+### Rules & Workflows:
 
-1. Open Cascade/Windsurf settings
-2. Navigate to "Rules" or "Instructions" section
-3. Create 5 new rules as specified above
-4. Copy the content exactly as written
-5. Set rules to "Always Active"
-6. Save and verify rules are enabled
+**No manual configuration needed!** Cascade automatically reads rules and workflows from the `.cascade/` directory.
 
-### How to Set Up Workflows:
-
-1. Open Cascade/Windsurf settings
-2. Navigate to "Workflows" or "Automations" section
-3. Create 5 new workflows as specified above
-4. For each workflow, define:
-   - Trigger phrase or condition
-   - Sequential steps to execute
-   - Expected outputs
-5. Test each workflow after creation
-6. Save and verify workflows are active
+The `.cascade/` directory is already included in your project structure and contains:
+- Pre-configured rules in `.cascade/rules/`
+- Pre-configured workflows in `.cascade/workflows/`
+- Documentation in `.cascade/README.md`
 
 ---
 
@@ -308,54 +116,29 @@ STEP 4: Confirm completion
 After configuration, verify:
 
 - [ ] All 4 memories are created and pointing to correct files
-- [ ] All 5 rules are active and enabled
-- [ ] All 5 workflows are created and functional
-- [ ] Test "Start Day Session" workflow by saying "Let's start"
-- [ ] Test "Update Code Context" workflow by saying "Update the code context"
+- [ ] The `.cascade/` directory exists with rules and workflows
+- [ ] Cascade can read files from `.cascade/rules/` and `.cascade/workflows/`
 - [ ] Verify AI reads PROJECT_LOG.md at session start
 - [ ] Verify AI checks CODE_CONTEXT.md before implementing new code
 - [ ] Verify AI asks for Hypothesis ID when starting new features
 
 ---
 
-## Alternative: Manual Configuration
+## Directory Structure
 
-If Cascade/Windsurf doesn't have a UI for memories/rules/workflows, you can:
+The `.cascade/` directory structure:
 
-1. **Create a `.cascade/` or `.windsurf/` directory** in the project root
-2. **Create configuration files:**
-   - `memories.json` - List of file paths to always load
-   - `rules.md` - Markdown file with all rules
-   - `workflows.json` - JSON defining workflow triggers and steps
-
-3. **Reference these in your IDE settings** or workspace configuration
-
-Example `memories.json`:
-```json
-{
-  "memories": [
-    {
-      "name": "Static Norms Memory",
-      "files": [
-        ".project_dev/DEV_NORMS.md",
-        ".project_dev/TDD_PROCESS.md",
-        ".project_dev/DOC_STANDARDS.md"
-      ]
-    },
-    {
-      "name": "Code Context Memory",
-      "files": [".project_dev/CODE_CONTEXT.md"]
-    },
-    {
-      "name": "Dynamic Status Memory",
-      "files": [".project_dev/PROJECT_LOG.md"]
-    },
-    {
-      "name": "Hypothesis Memory",
-      "files": ["HYPOTHESES.md"]
-    }
-  ]
-}
+```
+.cascade/
+├── README.md              # Overview of Cascade configuration
+├── MEMORY_MIGRATION.md    # Migration notes from old memory system
+├── rules/                 # Enforced constraints
+│   ├── dspy_documentation.md
+│   ├── hypothesis_traceability.md
+│   └── check_existing_code.md
+└── workflows/             # Procedural guides
+    ├── session_start.md
+    └── pre_implementation_checklist.md
 ```
 
 ---
